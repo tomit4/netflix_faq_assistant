@@ -15,6 +15,22 @@ CHAT_MODEL = "openai/gpt-oss-120b:free"
 BASE_URL = "https://openrouter.ai/api/v1"
 
 
+def print_help():
+    """
+    Display usage instructions for the chatbot.
+    """
+    print("""
+Available commands:
+    - Type any question about Netflix to get an answer
+    - help : Show this message
+    - exit : Quit the chatbot
+
+Notes:
+    - Answers are based only on the provided FAQ dataset
+    - If no relevant information is found, the bot will say so
+""")
+
+
 def get_model():
     """
     Initialize and return the LLM client using OpenRouter.
@@ -119,8 +135,6 @@ def generate_stream(model, query, context_docs):
     """
     Generate a streamed LLM response using retrieved context.
 
-    Falls back to non-streaming mode if streaming is unavailable.
-
     Args:
         model: LLM instance.
         query (str): User question.
@@ -153,9 +167,8 @@ def generate_stream(model, query, context_docs):
 
         raise RuntimeError("No streamed content received")
 
-    except Exception:
-        response = model.invoke(messages)
-        print(f"\nBot: {response.content}\n")
+    except Exception as e:
+        print(f"\n[Some error occurred during streaming: {e}]")
 
 
 def main():
@@ -181,6 +194,10 @@ def main():
 
         if query.lower() in ["exit", "quit", "q"]:
             break
+
+        if query.lower() == "help":
+            print_help()
+            continue
 
         query_embedding = embeddings.embed_query(query)
         top_matches = retrieve(query_embedding, doc_embeddings, top_n=3)

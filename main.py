@@ -16,6 +16,12 @@ BASE_URL = "https://openrouter.ai/api/v1"
 
 
 def get_model():
+    """
+    Initialize and return the LLM client using OpenRouter.
+
+    Returns:
+        ChatOpenRouter: Configured language model instance.
+    """
     if not OPENROUTER_API_KEY:
         raise ValueError("Missing OPENROUTER_API_KEY in environment")
 
@@ -25,16 +31,43 @@ def get_model():
 
 
 def get_embeddings():
+    """
+    Load the HuggingFace embedding model for text vectorization.
+
+    Returns:
+        HuggingFaceEmbeddings: Embedding model instance.
+    """
     return HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
     )
 
 
 def cosine_similarity(a, b):
+    """
+    Compute cosine similarity between two vectors.
+
+    Args:
+        a (np.ndarray): First vector.
+        b (np.ndarray): Second vector.
+
+    Returns:
+        float: Similarity score between -1 and 1.
+    """
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 
 def retrieve_data(docs):
+    """
+    Load and preprocess FAQ data from JSON files.
+
+    Each entry is converted into a structured "Question/Answer" string.
+
+    Args:
+        docs (list[str]): List of JSON file paths.
+
+    Returns:
+        list[str]: Processed document strings.
+    """
     documents = []
 
     try:
@@ -54,7 +87,6 @@ def retrieve_data(docs):
     except FileNotFoundError:
         print("Error: dataset file not found.")
         sys.exit(1)
-
     except json.JSONDecodeError:
         print("Error: invalid JSON format in dataset")
         sys.exit(1)
@@ -63,7 +95,17 @@ def retrieve_data(docs):
 
 
 def retrieve(query_embedding, doc_embeddings, top_n=10):
-    """Find the top N most similar documents by cosine similarity."""
+    """
+    Retrieve top-N most similar documents using cosine similarity.
+
+    Args:
+        query_embedding (np.ndarray): Embedding of the user query.
+        doc_embeddings (list[np.ndarray]): Precomputed document embeddings.
+        top_n (int): Number of results to return.
+
+    Returns:
+        list[tuple[int, float]]: Ranked list of (doc_index, similarity_score).
+    """
     scored = [
         (i, cosine_similarity(query_embedding, emb))
         for i, emb in enumerate(doc_embeddings)
@@ -74,6 +116,16 @@ def retrieve(query_embedding, doc_embeddings, top_n=10):
 
 
 def generate_stream(model, query, context_docs):
+    """
+    Generate a streamed LLM response using retrieved context.
+
+    Falls back to non-streaming mode if streaming is unavailable.
+
+    Args:
+        model: LLM instance.
+        query (str): User question.
+        context_docs (list[str]): Retrieved relevant documents.
+    """
     context = "\n\n".join(f"[{i+1}] {doc}" for i, doc in enumerate(context_docs))
 
     messages = [

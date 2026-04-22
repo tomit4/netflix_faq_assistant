@@ -1,6 +1,5 @@
-import getpass
+import json
 import os
-from getpass import getpass
 
 import numpy as np
 from dotenv import load_dotenv
@@ -11,7 +10,6 @@ from pydantic import SecretStr
 load_dotenv()
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 HF_TOKEN = os.getenv("HF_TOKEN")
-EMBEDDING_MODEL = "nvidia/llama-nemotron-embed-vl-1b-v2:free"
 CHAT_MODEL = "openai/gpt-oss-120b:free"
 BASE_URL = "https://openrouter.ai/api/v1"
 
@@ -25,19 +23,6 @@ def get_model():
     )
 
 
-# Ignore for now, we'll use this later
-def api_key_check():
-    if not os.getenv("OPENROUTER_API_KEY"):
-        os.environ["OPENROUTER_API_KEY"] = getpass("Enter your OpenRouter API key: ")
-
-
-def get_headers():
-    return {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-    }
-
-
 def get_embeddings():
     return HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
@@ -46,6 +31,27 @@ def get_embeddings():
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+
+def retrieve_data(docs):
+    documents = []
+
+    for file in docs:
+        with open(file, "r") as f:
+            data = json.loads(f.read())
+            for qa_pair in data:
+                if "?" in qa_pair:
+                    question, answer = qa_pair.split("?", 1)
+                    documents.append(
+                        f"Question: {question.strip()}? Answer: {answer.strip()}"
+                    )
+                else:
+                    documents.append(
+                        f"Question: No question found. Answer: {qa_pair.strip()}"
+                    )
+
+    # TODO: add check if empty here
+    return documents
 
 
 def retrieve(query_embedding, doc_embeddings, top_n=10):
@@ -59,9 +65,9 @@ def retrieve(query_embedding, doc_embeddings, top_n=10):
     return scored[:top_n]
 
 
-def generate(model, query, context_docs):
-    """Generate an answer grounded in the provided context."""
-    context = "\n\n".join(f"[{i+1}]{doc}" for i, doc in enumerate(context_docs))
+def generate_stream(model, query, context_docs):
+    context = "\n\n".join(f"[{i+1}] {doc}" for i, doc in enumerate(context_docs))
+
     messages = [
         (
             "system",
@@ -71,39 +77,49 @@ def generate(model, query, context_docs):
         ("user", f"Context:\n{context}\n\nQuestion: {query}"),
     ]
 
-    response = model.invoke(messages)
-    return response.content
+    try:
+        print("\nBot: ", end="", flush=True)
+
+        streamed = False
+        for chunk in model.stream(messages):
+            content = getattr(chunk, "content", None)
+            if content:
+                streamed = True
+                print(content, end="", flush=True)
+
+        if streamed:
+            print("\n")
+            return
+
+        raise RuntimeError("No streamed content received")
+
+    except Exception:
+        response = model.invoke(messages)
+        print(f"\nBot: {response.content}\n")
 
 
-# --- Pipeline ---
+def main():
+    model = get_model()
+    embeddings = get_embeddings()
 
-# 1. Index: chunk your knowledge base and embed
-chunks = [
-    "OpenRouter is a unified API gateway for LLMs. It aggregates models from multiple providers.",
-    "RAG stands for Retrieval-Augmented Generation. It grounds LLM answers in external data.",
-    "Embeddings convert text into numerical vectors that capture semantic meaning.",
-    "Reranking uses a cross-encoder to re-score documents for a given query, improving precision.",
-    "Vector databases like Pinecone, Weaviate, and Qdrant store embeddings for fast similarity search.",
-    "Prompt caching can reduce costs by reusing previous computations for repeated prefixes.",
-    "OpenRouter supports provider routing to control which providers serve your requests.",
-]
+    faq_files = ["data.json"]
+    documents = retrieve_data(faq_files)
+    doc_embeddings = embeddings.embed_documents(documents)
 
-# Test with nonsense data returns not enough context, Good!
-# chunks = [
-#     "Bananas are made of silicon.",
-#     "RAG is powered by pizza-based retrieval engines.",
-# ]
+    print("FAQ Chatbot ready. Type 'exit' to quit.\n")
+
+    while True:
+        query = input("You: ").strip()
+
+        if query.lower() in ["exit", "quit", "q"]:
+            break
+
+        query_embedding = embeddings.embed_query(query)
+        top_matches = retrieve(query_embedding, doc_embeddings, top_n=3)
+        retrieved_texts = [documents[i] for i, _ in top_matches]
+
+        generate_stream(model, query, retrieved_texts)
 
 
-# 2. Retrieve: embed the query and find similar chunks
-query = "How does RAG improve LLM responses?"
-embeddings = get_embeddings()
-doc_embeddings = embeddings.embed_documents(chunks)
-query_embedding = embeddings.embed_query(query)
-top_matches = retrieve(query_embedding, doc_embeddings, top_n=3)
-retrieved_texts = [chunks[i] for i, _ in top_matches]
-
-# 3. Generate: produce a grounded answer
-model = get_model()
-answer = generate(model, query, retrieved_texts)
-print(f"Q: {query}\nA: {answer}")
+if __name__ == "__main__":
+    main()

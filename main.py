@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 import numpy as np
 from dotenv import load_dotenv
@@ -36,21 +37,28 @@ def cosine_similarity(a, b):
 def retrieve_data(docs):
     documents = []
 
-    for file in docs:
-        with open(file, "r") as f:
-            data = json.loads(f.read())
-            for qa_pair in data:
-                if "?" in qa_pair:
-                    question, answer = qa_pair.split("?", 1)
-                    documents.append(
-                        f"Question: {question.strip()}? Answer: {answer.strip()}"
-                    )
-                else:
-                    documents.append(
-                        f"Question: No question found. Answer: {qa_pair.strip()}"
-                    )
+    try:
+        for file in docs:
+            with open(file, "r") as f:
+                data = json.loads(f.read())
+                for qa_pair in data:
+                    if "?" in qa_pair:
+                        question, answer = qa_pair.split("?", 1)
+                        documents.append(
+                            f"Question: {question.strip()}? Answer: {answer.strip()}"
+                        )
+                    else:
+                        documents.append(
+                            f"Question: No question found. Answer: {qa_pair.strip()}"
+                        )
+    except FileNotFoundError:
+        print("Error: dataset file not found.")
+        sys.exit(1)
 
-    # TODO: add check if empty here
+    except json.JSONDecodeError:
+        print("Error: invalid JSON format in dataset")
+        sys.exit(1)
+
     return documents
 
 
@@ -103,13 +111,21 @@ def main():
     embeddings = get_embeddings()
 
     faq_files = ["data.json"]
+
     documents = retrieve_data(faq_files)
+    if not documents:
+        raise ValueError("No documents loaded from dataset.")
+
     doc_embeddings = embeddings.embed_documents(documents)
 
-    print("FAQ Chatbot ready. Type 'exit' to quit.\n")
+    print("Netflix FAQ Chatbot ready. Type 'exit' to quit.\n")
 
     while True:
-        query = input("You: ").strip()
+        try:
+            query = input("You: ").strip()
+        except EOFError:
+            print("\nExiting...")
+            break
 
         if query.lower() in ["exit", "quit", "q"]:
             break
@@ -123,3 +139,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    sys.exit()

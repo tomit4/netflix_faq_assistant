@@ -187,6 +187,8 @@ click on the "Create token" button:
 You'll be presented with a modal that has a long string of letters/digits. Copy
 this string and paste it into the HF_TOKEN field of the `.env` file:
 
+![huggingface_setup_8](./assets/huggingface_setup_8.png)
+
 ```.env
 OPENROUTER_API_KEY="<your_openrouter_api_key_goes_here>"
 HF_TOKEN="<your_hugging_face_api_key_goes_here>"
@@ -196,7 +198,7 @@ Once you have copied the Hugging Face API key into the `.env` file, go ahead and
 click on the "Done" button in the Hugging Face web interface. Once you've done
 so, you'll see your created API key in their menu:
 
-![huggingface_setup_8](./assets/huggingface_setup_8.png)
+![huggingface_setup_9](./assets/huggingface_setup_9.png)
 
 ### Running the application
 

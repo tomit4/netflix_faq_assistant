@@ -145,7 +145,7 @@ without it. This section outlines signing up with Hugging Face, establishing an
 API key, and inputting that into the `.env` file, much like the process for
 setting up the OpenRouter API key.
 
-First navigate to the Hugging Face web page:
+First navigate to the [Hugging Face web page](https://huggingface.co/):
 
 ![huggingface_setup_1](./assets/huggingface_setup_1.png)
 

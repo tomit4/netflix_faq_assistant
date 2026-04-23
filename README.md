@@ -179,7 +179,7 @@ of options to setup for the API key.
 
 Fill out the name of the token. Note that you _must_ name the token HF_TOKEN.
 You don't have to fill out any of the other fields as this is just to have more
-forgiving rate limits from Hugging Face. Scroll to the button of the menu and
+forgiving rate limits from Hugging Face. Scroll to the bottom of the menu and
 click on the "Create token" button:
 
 ![huggingface_setup_7](./assets/huggingface_setup_7.png)

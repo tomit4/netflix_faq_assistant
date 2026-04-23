@@ -97,22 +97,22 @@ an API key. The steps are rather straightforward.
 
 First navigate, to [OpenRouter's homepage](https://openrouter.ai).
 
-![]()
+![openrouter_setup_1](./assets/openrouter_setup_1.png)
 
 Then, click on the Sign Up button.
 
-![]()
+![openrouter_setup_2](./assets/openrouter_setup_2.png)
 
 You'll be prompted to create an account. Choose whichever method you prefer and
 follow the sign up instructions. It is rather straight forward. Once you have
 signed up and verified your account, you'll be brought back to their homepage,
 click on the "Get API Key" link, and you'll be redirected to a menu:
 
-![]()
+![openrouter_setup_3](./assets/openrouter_setup_3.png)
 
 Click on the "Create" button, and a modal menu will be brought up:
 
-![]()
+![openrouter_setup_4](./assets/openrouter_setup_4.png)
 
 You can enter any name for the API key you like. Once you have entered a name
 for the API key, click on the "Create" button in the modal menu.
@@ -128,6 +128,8 @@ HF_TOKEN=""
 
 Once you have done this, go ahead and close the modal menu on the OpenRouter
 interface. You should see the name of your API key here.
+
+![openrouter_setup_5](./assets/openrouter_setup_5.png)
 
 It is worth noting that while using the application, that on the free tier of
 OpenRouter, you are allowed up to 50 requests per 24 hour period.
@@ -173,10 +175,10 @@ of options to setup for the API key.
 
 ![]()
 
-Fill out the name of the token, you can call it whatever you'd like. You don't
-have to fill out any of the other fields as this is just to have more forgiving
-rate limits from Hugging Face. Scroll to the button of the menu and click on the
-"Create token" button:
+Fill out the name of the token. Note that you _must_ name the token HF_TOKEN.
+You don't have to fill out any of the other fields as this is just to have more
+forgiving rate limits from Hugging Face. Scroll to the button of the menu and
+click on the "Create token" button:
 
 ![]()
 

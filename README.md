@@ -117,6 +117,8 @@ Click on the "Create" button, and a modal menu will be brought up:
 You can enter any name for the API key you like. Once you have entered a name
 for the API key, click on the "Create" button in the modal menu.
 
+![openrouter_setup_5](./assets/openrouter_setup_5.png)
+
 You'll then be presented with a long string of letters/digits, this is your API
 key. Copy this string and then paste it into the `.env` file you created
 earlier, specifically in the OPENROUTER_API_KEY field.
@@ -129,7 +131,7 @@ HF_TOKEN=""
 Once you have done this, go ahead and close the modal menu on the OpenRouter
 interface. You should see the name of your API key here.
 
-![openrouter_setup_5](./assets/openrouter_setup_5.png)
+![openrouter_setup_6](./assets/openrouter_setup_6.png)
 
 It is worth noting that while using the application, that on the free tier of
 OpenRouter, you are allowed up to 50 requests per 24 hour period.
@@ -145,11 +147,11 @@ setting up the OpenRouter API key.
 
 First navigate to the Hugging Face web page:
 
-![]()
+![huggingface_setup_1](./assets/huggingface_setup_1.png)
 
 And click on the "Sign Up" button.
 
-![]()
+![huggingface_setup_2](./assets/huggingface_setup_2.png)
 
 You'll be presented with a sign up form. Enter your email and password and
 follow their sign up instructions.
@@ -157,30 +159,30 @@ follow their sign up instructions.
 Once you have set up an account with Hugging Face, you'll be presented with
 their application interface:
 
-![]()
+![huggingface_setup_3](./assets/huggingface_setup_3.png)
 
 Click on your account avatar picture in the top right corner of the screen, by
 default, it is a circle with a series of colors in it:
 
-![]()
+![huggingface_setup_4](./assets/huggingface_setup_4.png)
 
 A drop down menu will be presented to you, go ahead and click on the "Access
 Tokens" menu option. This will redirect you to another page where you can create
 an API key.
 
-![]()
+![huggingface_setup_5](./assets/huggingface_setup_5.png)
 
 Click on the "Create new token" button, and you will be provided with a series
 of options to setup for the API key.
 
-![]()
+![huggingface_setup_6](./assets/huggingface_setup_6.png)
 
 Fill out the name of the token. Note that you _must_ name the token HF_TOKEN.
 You don't have to fill out any of the other fields as this is just to have more
 forgiving rate limits from Hugging Face. Scroll to the button of the menu and
 click on the "Create token" button:
 
-![]()
+![huggingface_setup_7](./assets/huggingface_setup_7.png)
 
 You'll be presented with a modal that has a long string of letters/digits. Copy
 this string and paste it into the HF_TOKEN field of the `.env` file:
@@ -194,7 +196,7 @@ Once you have copied the Hugging Face API key into the `.env` file, go ahead and
 click on the "Done" button in the Hugging Face web interface. Once you've done
 so, you'll see your created API key in their menu:
 
-![]()
+![huggingface_setup_8](./assets/huggingface_setup_8.png)
 
 ### Running the application
 

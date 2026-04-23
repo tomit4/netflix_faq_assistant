@@ -216,3 +216,19 @@ augmented (_i.e._ queries related to the Netflix streaming service). Typing
 the program.
 
 ### Disclaimer
+
+This application is developed as part of an academic assignment for educational
+purposes only. It is not affiliated with, endorsed by, or connected to Netflix,
+OpenRouter, or Hugging Face.
+
+The chatbot’s responses are generated using a Large Language Model (LLM) and a
+retrieval-based context system. While efforts have been made to ground responses
+in a curated dataset, outputs may still contain inaccuracies, omissions, or
+model-generated hallucinations.
+
+All API usage is subject to the respective providers’ terms of service,
+including rate limits and usage restrictions. Performance and availability may
+vary depending on external service constraints.
+
+Users should not rely on this application for official or authoritative
+information regarding Netflix services.

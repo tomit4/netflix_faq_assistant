@@ -183,7 +183,9 @@ def main():
 
     doc_embeddings = embeddings.embed_documents(documents)
 
-    print("Netflix FAQ Chatbot ready. Type 'exit' to quit.\n")
+    print(
+        "Netflix FAQ Chatbot ready.\nType 'help' to see basic usage.\nType 'exit' to quit.\n"
+    )
 
     while True:
         try:
